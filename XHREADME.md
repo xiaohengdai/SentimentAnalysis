@@ -2,6 +2,8 @@
  /Library/Frameworks/Python.framework/Versions/3.8/bin/python3 -m pip uninstall  scipy
  
  
+ - 异常文本分类
+ 
  - 问题1
  ```
 ValueError: Error downloading 'wordnet_ic' from <https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet_ic.zip>:
