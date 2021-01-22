@@ -78,13 +78,13 @@ def get_data(index_dict,word_vectors,combined,y):
     x_train, x_test, y_train, y_test = train_test_split(combined, y, test_size=0.2)
     y_train = keras.utils.to_categorical(y_train,num_classes=3) 
     y_test = keras.utils.to_categorical(y_test,num_classes=3)
-    # print x_train.shape,y_train.shape
+    # # print x_train.shape,y_train.shape
     return n_symbols,embedding_weights,x_train,y_train,x_test,y_test
 
 
 ##定义网络结构
 def train_lstm(n_symbols,embedding_weights,x_train,y_train,x_test,y_test):
-    print 'Defining a Simple Keras Model...'
+    # print 'Defining a Simple Keras Model...'
     model = Sequential()  # or Graph or whatever
     model.add(Embedding(output_dim=vocab_dim,
                         input_dim=n_symbols,
@@ -96,14 +96,14 @@ def train_lstm(n_symbols,embedding_weights,x_train,y_train,x_test,y_test):
     model.add(Dense(3, activation='softmax')) # Dense=>全连接层,输出维度=3
     model.add(Activation('softmax'))
 
-    print 'Compiling the Model...'
+    # print 'Compiling the Model...'
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',metrics=['accuracy'])
 
-    print "Train..." # batch_size=32
+    # print "Train..." # batch_size=32
     model.fit(x_train, y_train, batch_size=batch_size, epochs=n_epoch,verbose=1)
 
-    print "Evaluate..."
+    # print "Evaluate..."
     score = model.evaluate(x_test, y_test,
                                 batch_size=batch_size)
 
@@ -111,7 +111,7 @@ def train_lstm(n_symbols,embedding_weights,x_train,y_train,x_test,y_test):
     with open('../model/lstm.yml', 'w') as outfile:
         outfile.write( yaml.dump(yaml_string, default_flow_style=True) )
     model.save_weights('../model/lstm.h5')
-    print 'Test score:', score
+    # print 'Test score:', score
 ```
 
 #### 测试
@@ -120,26 +120,26 @@ def train_lstm(n_symbols,embedding_weights,x_train,y_train,x_test,y_test):
 
 ```python
 def lstm_predict(string):
-    print 'loading model......'
+    # print 'loading model......'
     with open('../model/lstm.yml', 'r') as f:
         yaml_string = yaml.load(f)
     model = model_from_yaml(yaml_string)
 
-    print 'loading weights......'
+    # print 'loading weights......'
     model.load_weights('../model/lstm.h5')
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',metrics=['accuracy'])
     data=input_transform(string)
     data.reshape(1,-1)
-    #print data
+    ## print data
     result=model.predict_classes(data)
-    # print result # [[1]]
+    # # print result # [[1]]
     if result[0]==1:
-        print string,' positive'
+        # print string,' positive'
     elif result[0]==0:
-        print string,' neutral'
+        # print string,' neutral'
     else:
-        print string,' negative'
+        # print string,' negative'
 ```
 
 经过检测，发现，原先在二分类模型中的“不是太好”，“不错不错”这样子带有前后语义转换的句子，都能正确预测，实战效果提升明显，但是也有缺点，缺点是中性评价出现的概率不高，笔者分析原因是，首先从数据集数量和质量着手，中性数据集的数量要比其他两个数据集少一半多，并且通过简单规则“然而”，“但”提取出来的中性数据集质量也不是很高，所以才会出现偏差。总而言之，训练数据的质量是非常重要的，如何获取高质量高数量的训练样本，也就成了新的难题。
