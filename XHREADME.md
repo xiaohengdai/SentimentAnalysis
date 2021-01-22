@@ -23,3 +23,11 @@ python3.7
 ```
 解决Keras加载模型TypeError: ('Keyword argument not understood:', u'return_state'):https://blog.csdn.net/yutingzhaomeng/article/details/78516145
 ```
+
+- 问题4
+```
+RuntimeError: you must first build vocabulary before training the model:
+用word2vec训练词向量是报错，百度发现是因为训练文本太小的。
+为了省事，随便往训练文本里敲了点东西，这样是远远不够的。
+增大训练文本之后，问题解决。
+```
